@@ -1,0 +1,217 @@
+1//----------------------------------------------------------===============
+
+import random
+def objective_function(solution):
+    return sum(solution)
+
+def generate_neighbour(solution):
+    neighbour=solution[:]
+    index=random.randint(0,len(solution)-1)
+    neighbour[index]^=1
+    return neighbour
+
+def hill():
+    solution=[random.randint(0,1) for _ in range(10)]
+    fitness=objective_function(solution)
+    while True:
+        neighbour=generate_neighbour(solution)
+        neighbour_fitness=objective_function(neighbour)
+
+        if(neighbour_fitness>fitness):
+            solution,fitness=neighbour,neighbour_fitness
+        else:
+            break
+    return solution,fitness
+
+best_solution,best_fitness=hill()
+print("Best Solution ",best_solution)
+print("Best Fitness ",best_fitness)
+
+2//----------------------------------------------------------===============
+
+
+def iddfs(root,goal):
+    def dls(node,goal,depth,path):
+        if depth==0 and node==goal:
+            path.append(node)
+            return True
+        if depth>0:
+            path.append(node)
+            for child in graph.get(node,[]):
+                if dls(child,goal,depth-1,path):
+                    return True
+            path.pop()
+        return False
+
+    depth=0
+    while True:
+        path=[]
+        if dls(root,goal,depth,path):
+            return path
+        depth+=1
+
+graph={
+    'a':['a','b'],
+    'b':['c','d'],
+    'c':['e'],
+    'd':[],
+    'e':[],
+    'f':[]
+}
+
+goal_node='c'
+result=iddfs('a',goal_node)
+
+if result:
+    print(result)
+else:
+    print("not found")
+
+3//----------------------------------------------------------===============
+
+
+def dls(node,goal,depth,path):
+    if depth==0 and node==goal:
+        path.append(node)
+        return True
+    if depth>0:
+        path.append(node)
+        for child in graph.get(node,[]):
+            if dls(child,goal,depth-1,path):
+                return True
+        path.pop()
+    return False
+
+graph={
+    'a':['b'],
+    'b':['c','d'],
+    'c':['e'],
+    'd':[],
+    'e':[],
+    'f':[]
+}
+
+limit=3
+goal_node='e'
+path=[]
+
+if dls('a',goal_node,limit,path):
+    print(path)
+else:
+    print("not found")
+
+4//----------------------------------------------------------===============
+
+
+train=[
+    (['yes','yes'],'dog'),
+    (['yes', 'no'], 'cat'),
+    (['no', 'yes'], 'dog'),
+    (['no', 'no'], 'cat'),
+    (['yes', 'yes'], 'dog')
+]
+
+h=[None,None]
+
+for example,label in train:
+    if label=='cat':
+        for i in range(len(example)):
+            if h[i] is None:
+                h[i]=example[i]
+            elif h[i]!=example[i]:
+                h[i]='?'
+print("Hypothesis",h)
+
+5//----------------------------------------------------------===============
+
+
+class ForwardChaining:
+    def __init__(self, rules, facts):
+        self.rules = rules
+        self.facts = facts
+
+
+    def run(self):
+        new_facts = True
+        while new_facts:
+            new_facts = False
+            for conditions, result in self.rules:
+
+                if all(cond in self.facts for cond in conditions) and result not in self.facts:
+                    self.facts.add(result)  # Add the new fact to known facts
+                    new_facts = True
+                    print(f"Derived fact: {result}")
+        return self.facts
+
+rules = [
+    (("A",), "B"),  # If A then B
+    (("B",), "C"),  # If B then C
+    (("C",), "D"),  # If C then D
+    (("A", "D"), "E")  # If A and D then E
+]
+facts = {"A"}  # Initial facts
+
+fc = ForwardChaining(rules, facts)
+derived_facts = fc.run()
+print("Final derived facts:", derived_facts)
+
+6//----------------------------------------------------------===============
+
+
+class BackwardChaining:
+    def __init__(self, rules, facts):
+        self.rules = rules
+        self.facts = set(facts)  # Store facts in a set for efficient membership checking
+
+    def is_true(self, goal):
+        if goal in self.facts:
+            return True
+        for conditions, result in self.rules:
+            if result == goal:
+                if all(self.is_true(cond) for cond in conditions):
+                    self.facts.add(goal)
+                    return True
+        return False
+
+
+rules = [
+    (("A",), "B"),    # If A then B
+    (("B",), "C"),    # If B then C
+    (("C",), "D"),    # If C then D
+    (("A", "D"), "E") # If A and D then E
+]
+
+facts = {"A"}  # Initial facts
+
+bc = BackwardChaining(rules, facts)
+goal = "E"
+result = bc.is_true(goal)
+
+print(f"Can we derive {goal}? {result}")
+
+
+7//----------------------------------------------------------===============
+
+
+import random
+
+responses={
+    "hi":["dff","fgfd"],
+    "hello":["sdf","cdfg"],
+    "pes":["pesiams","pesitms"]
+}
+
+def chat(user_input):
+    for key in responses:
+        if key==user_input.lower():
+            return random.choice(responses[key])
+
+    return "idont know"
+
+while True:
+    user_input=input("You:")
+    if user_input.lower()=="exit":
+        print("bye")
+        break
+    response=chat(user_input)
+    print("chatbot:",response)
